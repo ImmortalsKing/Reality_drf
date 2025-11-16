@@ -4,7 +4,11 @@ from . import views
 
 feedbacks_routers = DefaultRouter()
 feedbacks_routers.register('', views.FeedbacksApiViewsets)
+users_routers = DefaultRouter()
+users_routers.register('', views.UsersApiViewsets)
 
 urlpatterns = [
-    path('feed_viewsets/', include(feedbacks_routers.urls)),
+    path('feedbacks/', include(feedbacks_routers.urls)),
+    path('users/', include(users_routers.urls)),
+    path('', views.HomePage.as_view())
 ]
