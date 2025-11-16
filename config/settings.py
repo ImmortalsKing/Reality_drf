@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     #internal apps:
     'feedbacks',
     #external apps:
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

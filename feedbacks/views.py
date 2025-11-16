@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import GamesFeedbacks
+from .serializers import FeedbacksSerializer
 
-# Create your views here.
+class FeedbacksApiViewsets(viewsets.ModelViewSet):
+    model = GamesFeedbacks
+    serializer_class = FeedbacksSerializer
