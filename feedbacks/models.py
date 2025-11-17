@@ -16,7 +16,7 @@ class GamesFeedbacks(models.Model):
         editable=False,
     )
     text = models.TextField(verbose_name="Text")
-    create_date = models.DateTimeField(auto_now_add=True, verbose_name="Create Date")
+    create_date = models.DateField(auto_now_add=True, verbose_name="Create Date")
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="feedbacks", verbose_name="Author"
     )

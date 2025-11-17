@@ -16,4 +16,4 @@ class UsersApiViewsets(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     
 class HomePage(TemplateView):
-    template_name = 'feedbacks/index.html'
+    template_name = 'feedbacks/feedbacks.html'
