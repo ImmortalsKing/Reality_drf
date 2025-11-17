@@ -3,6 +3,7 @@ from .models import GamesFeedbacks
 from .serializers import FeedbacksSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
+from rest_framework.pagination import PageNumberPagination
 
 User = get_user_model()
 
