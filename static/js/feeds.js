@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8000/feedbacks/';
+const apiUrl = '/feedbacks/';
 const csrftoken = document.querySelector('meta[name="csrftoken"]').getAttribute('content');
 const spinnerEL = document.querySelector('.spinner');
 
@@ -27,41 +27,39 @@ submitbtnEL.addEventListener('click', (event) => {
             'hashtag': hashtag,
             'badge_letter': badgeLetter
         }
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'content-type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify(feedItem),
-            credentials: 'include'
-        })
-            .then(res => {
+        const postFeedback = async (feed) => {
+            try {
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify(feed),
+                    credentials: 'include'
+                })
                 if (!res.ok) {
                     console.log('Something went wrong...');
-                    return
+                    return;
                 }
-            })
-            .catch(error => {
-                console.log(error);
-            })
+            } catch (error) {
+                console.log("Error: ", error);
+
+            }
+        }
+        postFeedback(feedItem)
     }
 })
 
-
-
-fetch(apiUrl)
-    .then(res => {
+const showFeedbacksList = async () => {
+    try {
+        const res = await fetch(apiUrl);
         if (!res.ok) {
-            console.log('Something went wrong...');
-            return
+            console.log('Something Went Wrong...');
+            return;
         }
-        console.log(res);
-        return res.json()
-        
-    })
-    .then(data => {
+        const data = await res.json()
         if (data) {
             spinnerEL.classList.remove('spinner')
             data.forEach(feed => {
@@ -81,7 +79,9 @@ fetch(apiUrl)
             `)
             });
         }
-    })
-    .catch(error => {
-        console.log(error);
-    })
+    }
+    catch (error) {
+        console.log("Error: ", error);
+    }
+}
+showFeedbacksList()
