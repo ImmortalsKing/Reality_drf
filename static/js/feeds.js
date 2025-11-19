@@ -1,22 +1,24 @@
 const apiUrl = '/feedbacks/';
 const csrftoken = document.querySelector('meta[name="csrftoken"]').getAttribute('content');
 const spinnerEL = document.querySelector('.spinner');
+let allFeedbacks = []
 
 const textAreaEL = document.querySelector('.form__textarea');
 const submitbtnEL = document.querySelector('.submit-btn');
 const counterEL = document.querySelector('.counter');
 const formEL = document.querySelector('.form');
 const feedbacksEL = document.querySelector('.feedbacks');
+const hashtagsEL = document.querySelector('.hashtags')
 
 textAreaEL.addEventListener('input', () => {
     counterEL.textContent = 150 - textAreaEL.value.length;
 })
 
-function scrollToLastFeedback(){
+function scrollToLastFeedback() {
     const lastMessage = feedbacksEL.lastElementChild;
-    if(lastMessage){
-        lastMessage.scrollIntoView({behavior: "smooth"})
-    }else{
+    if (lastMessage) {
+        lastMessage.scrollIntoView({ behavior: "smooth" })
+    } else {
         console.error('No feedback to scroll in.')
     }
 }
@@ -76,7 +78,7 @@ submitbtnEL.addEventListener('click', (event) => {
         counterEL.textContent = 150;
         submitbtnEL.blur();
         scrollToLastFeedback()
-    }else{
+    } else {
         formEL.classList.add('form--invalid')
         setTimeout(() => {
             formEL.classList.remove('form--invalid')
@@ -95,6 +97,8 @@ const showFeedbacksList = async () => {
         const data = await res.json()
         if (data) {
             spinnerEL.classList.remove('spinner')
+            allFeedbacks = data;
+
             data.forEach(feed => {
                 feedbacksEL.insertAdjacentHTML('beforeend', `
             <li class="feedback">
@@ -118,3 +122,41 @@ const showFeedbacksList = async () => {
     }
 }
 showFeedbacksList()
+
+
+// add expand event to feedbacks
+
+const clickHandler = event => {
+    const clickEL = event.target;
+    if (clickEL.className.includes('upvote')) {
+        console.log('Nothing happend...');
+    } else {
+        clickEL.closest('.feedback').classList.toggle('feedback--expand');
+    };
+};
+
+feedbacksEL.addEventListener('click', clickHandler)
+
+// find feedbacks from hashtags
+
+const findFeedbacksFromHashtags = event => {
+    const clickEL = event.target;
+    console.log(clickEL);
+    if (clickEL.className === 'hashtags') {
+        return;
+    } else if (clickEL.textContent.includes('AllFeedbacks')) {
+        feedbacksEL.innerHTML = '';
+        showFeedbacksList()
+    } else {
+        const selectedHashtagEL = clickEL.closest('.hashtag').textContent.substring(1).trim().toLowerCase();
+        console.log(selectedHashtagEL);
+
+        const filteredFeedbacks = allFeedbacks.filter(feed =>
+            feed.hashtag.toLowerCase().trim() === selectedHashtagEL
+        );
+        console.log(filteredFeedbacks);
+
+    }
+}
+
+hashtagsEL.addEventListener('click', findFeedbacksFromHashtags)
