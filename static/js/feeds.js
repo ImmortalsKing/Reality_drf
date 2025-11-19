@@ -12,6 +12,15 @@ textAreaEL.addEventListener('input', () => {
     counterEL.textContent = 150 - textAreaEL.value.length;
 })
 
+function scrollToLastFeedback(){
+    const lastMessage = feedbacksEL.lastElementChild;
+    if(lastMessage){
+        lastMessage.scrollIntoView({behavior: "smooth"})
+    }else{
+        console.error('No feedback to scroll in.')
+    }
+}
+
 submitbtnEL.addEventListener('click', (event) => {
     event.preventDefault()
     if (textAreaEL.value.length >= 10 && textAreaEL.value.includes('#')) {
@@ -21,7 +30,7 @@ submitbtnEL.addEventListener('click', (event) => {
         }, 2000)
         const text = textAreaEL.value;
         const hashtag = text.split(' ').find(word => word.includes('#')).substring(1);
-        const badgeLetter = hashtag.substring(1, 2).toUpperCase()
+        const badgeLetter = hashtag.substring(0, 1).toUpperCase()
         const feedItem = {
             'text': text,
             'hashtag': hashtag,
@@ -49,6 +58,30 @@ submitbtnEL.addEventListener('click', (event) => {
             }
         }
         postFeedback(feedItem)
+        feedbacksEL.insertAdjacentHTML('beforeend', `
+            <li class="feedback">
+            <button class="upvote">
+            </button>
+            <section class="feedback__badge">
+                <p class="feedback__letter">${feedItem.badge_letter}</p>
+            </section>
+            <div class="feedback__content">
+                <p class="feedback__company">${feedItem.hashtag}</p>
+                <p class="feedback__text">${feedItem.text}</p>
+            </div>
+            <p class="feedback__date">NOW</p>
+        </li>
+            `)
+        textAreaEL.value = '';
+        counterEL.textContent = 150;
+        submitbtnEL.blur();
+        scrollToLastFeedback()
+    }else{
+        formEL.classList.add('form--invalid')
+        setTimeout(() => {
+            formEL.classList.remove('form--invalid')
+        }, 2000)
+        textAreaEL.focus()
     }
 })
 
