@@ -24,7 +24,9 @@ const hashtagsEL = document.querySelector('.hashtags');
 function renderFeedbackItem(feedback) {
     const feedItem = `
             <li class="feedback">
-            <button class="upvote">
+            <button id="${feedback.id}" class="upvote">
+                <i class="fa-solid fa-caret-up upvote__icon"></i>
+                <span class="upvote__count">${feedback.upvote_count}</span>
             </button>
             <section class="feedback__badge">
                 <p class="feedback__letter">${feedback.badge_letter}</p>
@@ -159,12 +161,38 @@ showFeedbacksList()
 /////////
 
 
-// add expand event to feedbacks
+// add expand event to feedbacks and upvote implemention
 
 const clickHandler = event => {
     const clickEL = event.target;
     if (clickEL.className.includes('upvote')) {
-        console.log('Nothing happend...');
+        console.log(clickEL);
+        upvotebtnEL = clickEL.closest('.upvote');
+        upvotebtnEL.disabled = true;
+        const upvoteCountEL = upvotebtnEL.querySelector('.upvote__count');
+        let upvoteCount = +upvoteCountEL.textContent;
+        upvoteCountEL.textContent = ++upvoteCount;
+        const elementId = upvotebtnEL.getAttribute('id');
+        const upvoteData = {
+            'upvote_count':upvoteCount,
+        }
+        fetch(`${apiUrl}${elementId}/`, {
+            method:'PATCH',
+            headers: {
+                'content-type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(upvoteData),
+            credentials: 'include'
+        }).then(res => {
+            if(!res.ok){
+                console.error('Something went wrong...');
+                return;
+            }
+        }).catch(error => {
+            console.log(error);
+        })
     } else {
         clickEL.closest('.feedback').classList.toggle('feedback--expand');
     };

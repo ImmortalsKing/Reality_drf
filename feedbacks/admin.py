@@ -3,7 +3,7 @@ from .models import GamesFeedbacks
 
 @admin.register(GamesFeedbacks)
 class FeedbacksAdmin(admin.ModelAdmin):
-    readonly_fields = ('hashtag', 'badge_letter', 'author')
+    readonly_fields = ('hashtag', 'badge_letter', 'author', 'upvote_count')
     
     def save_model(self, request, obj, form, change):
         if not change:
