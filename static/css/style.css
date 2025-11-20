@@ -71,7 +71,9 @@ button {
 
 /* BASE */
 .body {
-    background-image: linear-gradient(200deg, #654a86, #c10f92);
+    /* background-image: linear-gradient(200deg, #654a86, #c10f92); */
+    background-image: url(../images/high.jpg);
+    background-size: cover;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
     display: flex;
@@ -134,6 +136,7 @@ button {
 
 .header__pattern {
     position: absolute;
+    height: 277px;
     top: 0;
     z-index: 0;
 }
@@ -217,7 +220,7 @@ button {
     position: absolute;
     top: 13.5px;
     left: 20px;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.85);
     opacity: 0.42;
     pointer-events: none;
 }
@@ -247,7 +250,7 @@ button {
 .counter {
     font-weight: 500;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.55);
     pointer-events: none;
 }
 

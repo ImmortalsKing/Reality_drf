@@ -1,18 +1,58 @@
+// All Elements and inputes
+
 const apiUrl = '/feedbacks/';
 const csrftoken = document.querySelector('meta[name="csrftoken"]').getAttribute('content');
 const spinnerEL = document.querySelector('.spinner');
-let allFeedbacks = []
-
+let allFeedbacks = [];
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth() + 1;
+const day = date.getDate();
+const todayDate = `${year}-${month}-${day}`;
+const timer = 2000;
 const textAreaEL = document.querySelector('.form__textarea');
 const submitbtnEL = document.querySelector('.submit-btn');
 const counterEL = document.querySelector('.counter');
 const formEL = document.querySelector('.form');
 const feedbacksEL = document.querySelector('.feedbacks');
-const hashtagsEL = document.querySelector('.hashtags')
+const hashtagsEL = document.querySelector('.hashtags');
 
-textAreaEL.addEventListener('input', () => {
-    counterEL.textContent = 150 - textAreaEL.value.length;
-})
+/////////
+
+// render single feedback
+
+function renderFeedbackItem(feedback) {
+    const feedItem = `
+            <li class="feedback">
+            <button class="upvote">
+            </button>
+            <section class="feedback__badge">
+                <p class="feedback__letter">${feedback.badge_letter}</p>
+            </section>
+            <div class="feedback__content">
+                <p class="feedback__company">${feedback.hashtag}</p>
+                <p class="feedback__text">${feedback.text}</p>
+            </div>
+            <p class="feedback__date">${feedback.create_date == todayDate ? 'TODAY' : feedback.create_date}</p>
+        </li>
+            `
+    feedbacksEL.insertAdjacentHTML('beforeend', feedItem)
+}
+
+////////
+
+// render all feedbacks
+
+function renderAllFeedbacks(feedbackList) {
+    feedbacksEL.innerHTML = '';
+    feedbackList.forEach(feedItem => {
+        renderFeedbackItem(feedItem);
+    });
+};
+
+////////
+
+// scroll to last feedback after post
 
 function scrollToLastFeedback() {
     const lastMessage = feedbacksEL.lastElementChild;
@@ -23,13 +63,34 @@ function scrollToLastFeedback() {
     }
 }
 
+////////
+
+// characters counter calculator
+
+textAreaEL.addEventListener('input', () => {
+    counterEL.textContent = 150 - textAreaEL.value.length;
+})
+
+////////
+
+// form Element class changer
+
+const showVisualIndicator = (textCheack) => {
+    const className = textCheack === 'valid' ? 'form--valid' : 'form--invalid';
+    formEL.classList.add(className);
+    setTimeout(() => {
+        formEL.classList.remove(className);
+    }, timer);
+};
+
+////////
+
+// post single feedback
+
 submitbtnEL.addEventListener('click', (event) => {
     event.preventDefault()
     if (textAreaEL.value.length >= 10 && textAreaEL.value.includes('#')) {
-        formEL.classList.add('form--valid')
-        setTimeout(() => {
-            formEL.classList.remove('form--valid')
-        }, 2000)
+        showVisualIndicator('valid')
         const text = textAreaEL.value;
         const hashtag = text.split(' ').find(word => word.includes('#')).substring(1);
         const badgeLetter = hashtag.substring(0, 1).toUpperCase()
@@ -59,33 +120,21 @@ submitbtnEL.addEventListener('click', (event) => {
 
             }
         }
-        postFeedback(feedItem)
-        feedbacksEL.insertAdjacentHTML('beforeend', `
-            <li class="feedback">
-            <button class="upvote">
-            </button>
-            <section class="feedback__badge">
-                <p class="feedback__letter">${feedItem.badge_letter}</p>
-            </section>
-            <div class="feedback__content">
-                <p class="feedback__company">${feedItem.hashtag}</p>
-                <p class="feedback__text">${feedItem.text}</p>
-            </div>
-            <p class="feedback__date">NOW</p>
-        </li>
-            `)
+        postFeedback(feedItem);
+        renderFeedbackItem(feedItem);
         textAreaEL.value = '';
         counterEL.textContent = 150;
         submitbtnEL.blur();
-        scrollToLastFeedback()
+        scrollToLastFeedback();
     } else {
-        formEL.classList.add('form--invalid')
-        setTimeout(() => {
-            formEL.classList.remove('form--invalid')
-        }, 2000)
-        textAreaEL.focus()
+        showVisualIndicator('invalid');
+        textAreaEL.focus();
     }
 })
+
+//////////
+
+// get all feedbacks
 
 const showFeedbacksList = async () => {
     try {
@@ -98,23 +147,7 @@ const showFeedbacksList = async () => {
         if (data) {
             spinnerEL.classList.remove('spinner')
             allFeedbacks = data;
-
-            data.forEach(feed => {
-                feedbacksEL.insertAdjacentHTML('beforeend', `
-            <li class="feedback">
-            <button class="upvote">
-            </button>
-            <section class="feedback__badge">
-                <p class="feedback__letter">${feed.badge_letter}</p>
-            </section>
-            <div class="feedback__content">
-                <p class="feedback__company">${feed.hashtag}</p>
-                <p class="feedback__text">${feed.text}</p>
-            </div>
-            <p class="feedback__date">${feed.create_date}</p>
-        </li>
-            `)
-            });
+            renderAllFeedbacks(data);
         }
     }
     catch (error) {
@@ -122,6 +155,8 @@ const showFeedbacksList = async () => {
     }
 }
 showFeedbacksList()
+
+/////////
 
 
 // add expand event to feedbacks
@@ -135,13 +170,14 @@ const clickHandler = event => {
     };
 };
 
+/////////
+
 feedbacksEL.addEventListener('click', clickHandler)
 
 // find feedbacks from hashtags
 
 const findFeedbacksFromHashtags = event => {
     const clickEL = event.target;
-    console.log(clickEL);
     if (clickEL.className === 'hashtags') {
         return;
     } else if (clickEL.textContent.includes('AllFeedbacks')) {
@@ -149,14 +185,15 @@ const findFeedbacksFromHashtags = event => {
         showFeedbacksList()
     } else {
         const selectedHashtagEL = clickEL.closest('.hashtag').textContent.substring(1).trim().toLowerCase();
-        console.log(selectedHashtagEL);
 
         const filteredFeedbacks = allFeedbacks.filter(feed =>
             feed.hashtag.toLowerCase().trim() === selectedHashtagEL
         );
-        console.log(filteredFeedbacks);
+        renderAllFeedbacks(filteredFeedbacks);
 
     }
 }
 
 hashtagsEL.addEventListener('click', findFeedbacksFromHashtags)
+
+////////
