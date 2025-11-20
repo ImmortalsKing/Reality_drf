@@ -23,9 +23,7 @@ class GamesFeedbacks(models.Model):
     badge_letter = models.CharField(
         max_length=5, verbose_name="Badge Letter", blank=True, null=True, editable=False
     )
-    upvote_count = models.IntegerField(
-        max_length=10, verbose_name="Upvote Count", default=0
-    )
+    upvote_count = models.IntegerField(verbose_name="Upvote Count", default=0)
 
     def save(self, *args, **kwargs):
         if not self.pk:

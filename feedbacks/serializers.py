@@ -16,7 +16,6 @@ class FeedbacksSerializer(serializers.ModelSerializer):
             'text',
             'create_date',
             'badge_letter',
-            'upvote_count',
             'author_display',
         ]
         
