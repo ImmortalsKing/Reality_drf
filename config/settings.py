@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+from django.contrib import messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,10 +26,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #internal apps:
     'feedbacks',
+    'account',
     #external apps:
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    'django_recaptcha',
     'corsheaders',
 ]
 
@@ -92,6 +95,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -138,3 +151,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=1)
 }
+
+RECAPTCHA_PUBLIC_KEY = '6LeKBhQsAAAAAFc-1o_EGevUEuGfQCf4TciA_11p'
+RECAPTCHA_PRIVATE_KEY = '6LeKBhQsAAAAAJqGfnorzQ2auaN0E9xlE-gygZoo'

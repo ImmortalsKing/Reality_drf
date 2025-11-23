@@ -10,5 +10,5 @@ users_routers.register('', views.UsersApiViewsets)
 urlpatterns = [
     path('feedbacks/', include(feedbacks_routers.urls)),
     path('users/', include(users_routers.urls)),
-    path('', views.HomePage.as_view())
+    path('', views.HomePage.as_view(), name="feedbacks_page")
 ]

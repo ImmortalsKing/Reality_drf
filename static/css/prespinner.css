@@ -4,7 +4,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: linear-gradient(200deg, #5e5858, #3f0000);
+      background-image: linear-gradient(200deg, #5e5858d4, #1a0000);
       display: flex;
       flex-direction: column;
       justify-content: center;
