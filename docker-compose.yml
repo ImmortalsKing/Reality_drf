@@ -1,0 +1,56 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "${NGINX_PORT}:15520"
+    volumes:
+      - "./.ci/nginx/conf.d:/etc/nginx/conf.d"
+      - "static_volume:/app/staticfiles"
+    networks:
+      - drf_network
+
+  db:
+    image: postgres:latest
+    container_name: drf_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - drf_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  
+  web:
+    build: .
+    container_name: reality_drf_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app/
+      - "./.ci/nginx/conf.d:/etc/nginx/conf.d"
+      - "static_volume:/app/staticfiles"
+    networks:
+      - drf_network
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
+  static_volume:
+
+networks:
+  drf_network:
+    driver: bridge
